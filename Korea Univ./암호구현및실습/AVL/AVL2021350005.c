@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define MAX(a,b) (a)
+#define MAX(a, b) (((a) > (b)) ? (a) : (b))
 
-int balance;
+int num = 0;
+int bn = 0;
+int loop=0;
 
 typedef struct _TreeNode
 {
@@ -35,10 +37,10 @@ int breakingNode(TreeNode *node)
 {
     if(node == NULL)
         return 0;
-    
-    return Height(node->left) - Height(node->right);
-}
 
+    return Height(node->left) - Height(node->right);
+
+}
 
 TreeNode* new_node(int key)
 {
@@ -51,14 +53,35 @@ TreeNode* new_node(int key)
 
 TreeNode* insert_node(TreeNode **node, int key)
 {
+    int balance = 0;
+
     if((*node) == NULL)
         (*node) = new_node(key);
     if(key < (*node)->fp)
+    {
         (*node)->left = insert_node(&((*node)->left), key);
+        balance = breakingNode(*node);
+        if(balance > 1 || balance < -1)
+        {
+            if(loop==0){
+                bn = (*node)->fp;
+                loop++;
+            }
+        }        
+    }
+        
     else if(key > (*node)->fp)
+    {
         (*node)->right = insert_node(&((*node)->right), key);
-
-    balance = breakingNode(*node);
+        balance = breakingNode(*node);
+        if(balance > 1 || balance < -1)
+        {
+            if(loop==0){
+                bn = (*node)->fp;
+                loop++;
+            }
+        }                            
+    }
     return *node;
 }
 
@@ -87,20 +110,18 @@ int main()
 {
     TreeNode *root = NULL;
     FILE *fp, *fp2;
-    char insert[10];
-    int num;
+    char input[10];
     
 
-    fp = fopen("AVL.in.", "r");  // 파일 읽기
-    int ret;
-    fp2 = fopen("AVL.out.", "w"); // 파일 쓰기
+    fp = fopen("AVL.in", "r");  // 파일 읽기
+    fp2 = fopen("AVL.out", "w"); // 파일 쓰기
 
     if(fp==NULL)
     {
         printf("file open fail\n");
         exit(0);
     }
-    while(fscanf(fp, "%s%d", insert, &num) != EOF)
+    while(fscanf(fp, "%s%d", input, &num) != EOF)
     {
         insert_node(&root, num);
 
@@ -109,13 +130,11 @@ int main()
         fprintf(fp2, "\nP ");
         preorder(fp2, root);
         fprintf(fp2, "\nBN ");
-        fprintf(fp2, "%d", balance);
+        fprintf(fp2, "%d", bn);
         fprintf(fp2, "\n\n");
 
-        if(ret==EOF)
-            break;
+        loop=0;
     }
-    
 
     fclose(fp);
     fclose(fp2);
