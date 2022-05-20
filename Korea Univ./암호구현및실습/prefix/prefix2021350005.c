@@ -1,8 +1,11 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_STACK_SIZE 13
+char num = 0;
+
+#define MAX_STACK_SIZE 101
 
 typedef int element;
 typedef struct
@@ -11,24 +14,25 @@ typedef struct
     int top;
 } StackType;
 
-void init(StackType *s)
+void init(StackType* s)
 {
+    memset(s->stack, 0, sizeof(int) * MAX_STACK_SIZE);
     s->top = -1;
 }
 
-int is_empty(StackType *s)
+int is_empty(StackType* s)
 {
     return (s->top == -1);
 }
 
-int is_full(StackType *s)
+int is_full(StackType* s)
 {
     return (s->top == (MAX_STACK_SIZE - 1));
 }
 
-void push(StackType *s, element item)   // 삽입함수
+void push(StackType* s, element item)   // 삽입함수
 {
-    if(is_full(s))
+    if (is_full(s))
     {
         fprintf(stderr, "스택 포화 에러\n");
         return;
@@ -37,9 +41,9 @@ void push(StackType *s, element item)   // 삽입함수
         s->stack[++(s->top)] = item;
 }
 
-element pop(StackType *s)
+char pop(StackType* s)
 {
-    if(is_empty(s))
+    if (is_empty(s))
     {
         fprintf(stderr, "스택 공백 에러\n");
         exit(1);
@@ -48,19 +52,79 @@ element pop(StackType *s)
         return s->stack[(s->top)--];
 }
 
-element evalPrefix(char *exp)
+element evalPrefix(FILE* file, StackType* s, char num)
 {
-    int opr1, opr2, value, i = 0;
-    int length = strlen(exp);
-    char symbol;
-    top = NULL;
+    push(s, num);
 
-    for(i=0;i<length;i++)
+    if (s->stack[(s->top)] != '+' && s->stack[(s->top)] != '-' && s->stack[(s->top)] != '*' && s->stack[(s->top)] != '/')
     {
-        symbol = exp[i];
-        if(symbol != '+' && symbol != '-' && symbol != '*' && symbol != '/')
+        if (s->stack[(s->top) - 1] != '+' && s->stack[(s->top) - 1] != '-' && s->stack[(s->top) - 1] != '*' && s->stack[(s->top) - 1] != '/')
         {
-            value = symbol - '0';
+            if (s->stack[(s->top) - 2] == '+' || s->stack[(s->top) - 2] == '-' || s->stack[(s->top) - 2] == '*' || s->stack[(s->top) - 2] == '/')
+            {
+                int a = pop(s);
+                int b = pop(s);
+                char c = pop(s);
+                int d = b + a;
+                int e = b - a;
+                int f = b * a;
+                int g = b / a;
+
+                switch (c)
+                {
+                case '+': 
+                    push(s, d + '0');
+                    break;
+                case '-':
+                    push(s, e + '0');
+                    break;
+                case '*': 
+                    push(s, f + '0');
+                    break;
+                case '/': 
+                    push(s, g + '0');
+                    break;
+                }
+            }
         }
     }
+
+    printf("after cal top is %c", s->stack[s->top]);
+}
+
+int main(void)
+{
+    StackType *s = (StackType*)malloc(sizeof(StackType));
+    FILE* fp, * fp2;
+    int n = 0;
+
+    fp = fopen("prefix.in", "r");
+    fp2 = fopen("prefix.out", "w");
+
+    if (fp == NULL)
+    {
+        printf("file open fail\n");
+        exit(0);
+    }
+
+    fscanf(fp, "%d", &n);
+    fprintf(fp2, "%d\n", n);
+    fgetc(fp);
+
+    for (int i = 0; i < n; i++)
+    {
+        init(s);
+        while (fscanf(fp, "%c", &num) != EOF)
+        {
+            evalPrefix(fp2, s, num);
+            if (fgetc(fp) == '\n')
+                break;
+        }
+        fprintf(fp2, "%c\n", s->stack[s->top]);
+    }
+
+    fclose(fp);
+    fclose(fp2);
+
+    return 0;
 }
