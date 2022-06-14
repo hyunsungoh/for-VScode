@@ -89,7 +89,7 @@ element evalPrefix(FILE* file, StackType* s, char num)
         }
     }
 
-    printf("after cal top is %c", s->stack[s->top]);
+    printf("after cal top is %c\n", s->stack[s->top]);
 }
 
 int main(void)
