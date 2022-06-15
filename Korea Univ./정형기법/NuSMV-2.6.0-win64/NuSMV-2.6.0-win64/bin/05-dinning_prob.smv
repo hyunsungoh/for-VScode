@@ -1,0 +1,27 @@
+MODULE main
+VAR
+    Phil1 : process proc(Phil2.state,turn,0);
+    Phil2 : process proc(Phil1.state,turn,1);
+    turn : {0,1};
+ASSIGN
+    init(turn) := 0;
+
+-- You can leave the evolution empty:
+-- in this way turn changes randomly.
+
+MODULE proc(other-person,turn,myname)
+VAR
+    state: {thinking,hungry,eating};
+ASSIGN
+    init(state) := -- Complete here
+    next(state) :=
+        case
+            (state = hungry) &
+            (other-person=hungry) &
+            (turn=myname)              : eating;
+            (state = hungry) & -- Complete the case here
+            (state = thinking) -- Complete the case here
+            (state = eating)           : {eating,thinking};
+            TRUE                       : state;
+        esac;
+FAIRNESS running
