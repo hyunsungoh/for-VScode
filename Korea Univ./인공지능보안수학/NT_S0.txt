@@ -1,0 +1,9 @@
+Iteration 0: alp=1.000000e+00, f=3.838403e-02, gnorm=3.998201e-01
+Iteration 1: alp=5.000000e-01, f=1.876234e-02, gnorm=4.784866e+00
+Iteration 2: alp=1.000000e+00, f=4.289183e-03, gnorm=6.563523e-01
+Iteration 3: alp=1.000000e+00, f=9.032733e-04, gnorm=1.265832e+00
+Iteration 4: alp=1.000000e+00, f=1.851409e-05, gnorm=3.465826e-02
+Iteration 5: alp=1.000000e+00, f=3.397039e-08, gnorm=8.019780e-03
+Iteration 6: alp=1.000000e+00, f=3.226676e-14, gnorm=1.451948e-06
+Iteration 7: alp=1.000000e+00, f=1.089484e-25, gnorm=1.436159e-11
+Iteration 8: alp=1.000000e+00, f=0.000000e+00, gnorm=0.000000e+00
